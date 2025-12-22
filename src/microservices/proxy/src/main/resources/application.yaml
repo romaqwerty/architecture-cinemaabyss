@@ -1,0 +1,54 @@
+server:
+  port: ${PORT}
+
+spring:
+  application:
+    name: proxy
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+
+            - id: health-to-monolith
+              uri: ${MONOLITH_URL}
+              predicates:
+                - Path=/health/**
+
+            - id: movies-to-microservice
+              uri: ${MOVIES_SERVICE_URL}
+              predicates:
+                - Path=/api/movies/**
+                - ProxyFactory=true
+
+            - id: movies-to-monolith
+              uri: ${MONOLITH_URL}
+              predicates:
+                - Path=/api/movies/**
+
+            - id: users-to-monolith
+              uri: ${MONOLITH_URL}
+              predicates:
+                - Path=/api/users/**
+
+            - id: payments-to-monolith
+              uri: ${MONOLITH_URL}
+              predicates:
+                - Path=/api/payments/**
+
+            - id: subscriptions-to-monolith
+              uri: ${MONOLITH_URL}
+              predicates:
+                - Path=/api/subscriptions/**
+
+            - id: events-to-events-service
+              uri: ${EVENTS_SERVICE_URL}
+              predicates:
+                - Path=/api/events/**
+
+proxy:
+  gradual-migration: ${GRADUAL_MIGRATION}
+  movies-migration-percent: ${MOVIES_MIGRATION_PERCENT}
+
+
+
