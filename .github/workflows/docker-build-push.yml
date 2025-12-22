@@ -82,7 +82,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           
-      - name: Extract metadata (tags, labels) for Monolith
+      - name: Extract metadata (tags, labels) for Proxy
         id: meta-proxy
         uses: docker/metadata-action@v4
         with:
@@ -104,7 +104,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           
-      - name: Extract metadata (tags, labels) for Monolith
+      - name: Extract metadata (tags, labels) for Events
         id: meta-events
         uses: docker/metadata-action@v4
         with:
@@ -121,8 +121,8 @@ jobs:
         with:
           context: ./src/microservices/events
           push: true
-          tags: ${{ steps.meta-proxy-service.outputs.tags }}
-          labels: ${{ steps.meta-proxy-service.outputs.labels }}
+          tags: ${{ steps.meta-events-service.outputs.tags }}
+          labels: ${{ steps.meta-events-service.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
