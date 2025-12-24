@@ -1,0 +1,86 @@
+@startuml Container
+title HomeCinema
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(user, "Пользователь", "Пользователь онлайн кинотеатра")
+Person(admin, "Админ", "Админ онлайн кинотеатра")
+
+Container(mobile, "Mobile Application", "Android IOS", "Мобильное приложение")
+Container(web, "Web Application", "JS", "WEB приложение")
+Container(TV, "TV", "Android", "Приложение для TV")
+
+System(HomeCinema, "Система Кинобездна")
+
+System_Boundary("HomeCinema", "Home Cinema System") {
+    Container(ApiGateWay, "API gateway", "Spring Cloud", "API gateway", "java")
+
+    Container(UserService, "Сервис управления системой и пользователями", "Spring boot", "Сервис управления системой и пользователями", "java")
+    ContainerDb(UserService.Database,  "Postgres", "postgresql")
+
+    Container(MoviesService, "Сервис фильмов", "Spring boot", "Сервис хранения метаданных фильмов", "java")
+    ContainerDb(MoviesService.Database,  "Postgres", "postgresql")
+
+    Container(RatingService, "Сервис пользовательских предпочтений", "Spring boot", "Сервис хранения избранных фильмов и оценок", "java")
+    ContainerDb(RatingService.Database,  "Postgres", "postgresql")
+
+
+    Container(ActivityService, "Cервис пользовательской активности", "Spring boot", "Сервис истории просмотров", "java")
+
+    ContainerDb(Activity.Database,  "Postgres", "postgresql")
+
+    Container(SubscriptionService, "Сервис подписок", "Spring boot", "Сервис подписок", "java")
+    ContainerDb(SubscriptionService.Database,  "Postgres", "postgresql")
+
+    Container(PaymentService, "Сервис оплаты", "Spring boot", "Сервис платежей", "java")
+    ContainerDb(PaymentService.Database,  "Postgres", "postgresql")
+    Container(RecommendationAdapterService, "Recommendation Adapter service", "Spring boot", "Адаптер для интеграции с внешней рекомендательной системой", "java")
+
+    System(AuthService, "Сервис аутентификации", "Система аутентификации пользователей")
+}
+
+SystemQueue(Broker, "Kafka", "Брокер сообщений")
+System_Ext(RecommendationSystem, "Рекомендательная система", "Рекомендательная система для просмотров")
+Rel(UserService, UserService.Database, "Чтение/Запись данных", "SQL")
+
+Rel(MoviesService, MoviesService.Database, "Чтение/Запись данных", "SQL")
+Rel(RatingService, RatingService.Database, "Чтение/Запись данных", "SQL")
+Rel(SubscriptionService, SubscriptionService.Database, "Чтение/Запись данных", "SQL")
+Rel(PaymentService, PaymentService.Database, "Чтение/Запись данных", "SQL")
+
+Rel(ActivityService, Activity.Database, "Чтение/Запись данных", "SQL")
+Rel(ApiGateWay, UserService, "Запрос данных", "Http/Json")
+Rel(ApiGateWay, MoviesService, "Запрос данных", "Http/Json")
+Rel(ApiGateWay, RatingService, "Запрос данных", "Http/Json")
+Rel(ApiGateWay, SubscriptionService, "Запрос данных", "Http/Json")
+Rel(ApiGateWay, PaymentService, "Запрос данных", "Http/Json")
+Rel(ApiGateWay, RecommendationAdapterService, "Запрос данных", "Http/Json")
+
+Rel(ApiGateWay, ActivityService, "Запрос данных", "Http/Json")
+
+Rel(ApiGateWay, UserService, "Запрос данных", "Http/Json")
+
+Rel(UserService, MoviesService, "Запрос данных", "Http/Json")
+Rel(UserService, RatingService, "Запрос данных", "Http/Json")
+Rel(UserService, SubscriptionService, "Запрос данных", "Http/Json")
+Rel(UserService, PaymentService, "Запрос данных", "Http/Json")
+Rel(AuthService, UserService, "Запрос данных", "Http/Json")
+Rel(AuthService, ApiGateWay, "Запрос данных", "Http/Json")
+Rel(UserService, Broker, "Запрос данных", "Http/Json")
+
+Rel(user, mobile, "")
+Rel(user, web, "")
+Rel(user, TV, "")
+
+Rel(admin, web, "")
+
+Rel(mobile, ApiGateWay, "Запрос данных", "Http/Json")
+Rel(web, ApiGateWay, "Запрос данных", "Http/Json")
+Rel(TV, ApiGateWay, "Запрос данных", "Http/Json")
+Rel(RecommendationSystem, Broker, "AVRO")
+Rel(Broker, RecommendationSystem, "AVRO")
+Rel(ActivityService, Broker, "AVRO")
+Rel(RatingService, Broker, "AVRO")
+Rel(Broker, RecommendationAdapterService, "AVRO")
