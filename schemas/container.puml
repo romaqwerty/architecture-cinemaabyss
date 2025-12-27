@@ -1,5 +1,5 @@
 @startuml Container
-title HomeCinema
+title Cinemaabyss
 
 top to bottom direction
 
@@ -12,13 +12,13 @@ Container(mobile, "Mobile Application", "Android IOS", "Мобильное пр�
 Container(web, "Web Application", "JS", "WEB приложение")
 Container(TV, "TV", "Android", "Приложение для TV")
 
-System(HomeCinema, "Система Кинобездна")
+System(Cinemaabyss, "Система Кинобездна")
 
-System_Boundary("HomeCinema", "Home Cinema System") {
+System_Boundary("Cinemaabyss", "Home Cinema System") {
     Container(ApiGateWay, "API gateway", "Spring Cloud", "API gateway", "java")
 
-    Container(UserService, "Сервис управления системой и пользователями", "Spring boot", "Сервис управления системой и пользователями", "java")
-    ContainerDb(UserService.Database,  "Postgres", "postgresql")
+    Container(ManagementService, "Сервис управления системой и пользователями", "Spring boot", "Сервис управления системой и пользователями", "java")
+    ContainerDb(ManagementService.Database,  "Postgres", "postgresql")
 
     Container(MoviesService, "Сервис фильмов", "Spring boot", "Сервис хранения метаданных фильмов", "java")
     ContainerDb(MoviesService.Database,  "Postgres", "postgresql")
@@ -43,7 +43,7 @@ System_Boundary("HomeCinema", "Home Cinema System") {
 
 SystemQueue(Broker, "Kafka", "Брокер сообщений")
 System_Ext(RecommendationSystem, "Рекомендательная система", "Рекомендательная система для просмотров")
-Rel(UserService, UserService.Database, "Чтение/Запись данных", "SQL")
+Rel(ManagementService, ManagementService.Database, "Чтение/Запись данных", "SQL")
 
 Rel(MoviesService, MoviesService.Database, "Чтение/Запись данных", "SQL")
 Rel(RatingService, RatingService.Database, "Чтение/Запись данных", "SQL")
@@ -51,7 +51,7 @@ Rel(SubscriptionService, SubscriptionService.Database, "Чтение/Запис�
 Rel(PaymentService, PaymentService.Database, "Чтение/Запись данных", "SQL")
 
 Rel(ActivityService, Activity.Database, "Чтение/Запись данных", "SQL")
-Rel(ApiGateWay, UserService, "Запрос данных", "Http/Json")
+Rel(ApiGateWay, ManagementService, "Запрос данных", "Http/Json")
 Rel(ApiGateWay, MoviesService, "Запрос данных", "Http/Json")
 Rel(ApiGateWay, RatingService, "Запрос данных", "Http/Json")
 Rel(ApiGateWay, SubscriptionService, "Запрос данных", "Http/Json")
@@ -59,16 +59,15 @@ Rel(ApiGateWay, PaymentService, "Запрос данных", "Http/Json")
 Rel(ApiGateWay, RecommendationAdapterService, "Запрос данных", "Http/Json")
 
 Rel(ApiGateWay, ActivityService, "Запрос данных", "Http/Json")
+Rel(ApiGateWay, ManagementService, "Запрос данных", "Http/Json")
 
-Rel(ApiGateWay, UserService, "Запрос данных", "Http/Json")
-
-Rel(UserService, MoviesService, "Запрос данных", "Http/Json")
-Rel(UserService, RatingService, "Запрос данных", "Http/Json")
-Rel(UserService, SubscriptionService, "Запрос данных", "Http/Json")
-Rel(UserService, PaymentService, "Запрос данных", "Http/Json")
-Rel(AuthService, UserService, "Запрос данных", "Http/Json")
-Rel(AuthService, ApiGateWay, "Запрос данных", "Http/Json")
-Rel(UserService, Broker, "Запрос данных", "Http/Json")
+Rel(ManagementService, MoviesService, "Запрос данных", "Http/Json")
+Rel(ManagementService, RatingService, "Запрос данных", "Http/Json")
+Rel(ManagementService, SubscriptionService, "Запрос данных", "Http/Json")
+Rel(ManagementService, PaymentService, "Запрос данных", "Http/Json")
+Rel(AuthService, ManagementService, "Запрос данных", "OAUTH 2.0")
+Rel(AuthService, ApiGateWay, "Запрос данных", "OAUTH 2.0")
+Rel(ManagementService, Broker, "Запрос данных", "Http/Json")
 
 Rel(user, mobile, "")
 Rel(user, web, "")
